@@ -2,6 +2,7 @@ package com.myblog.memberapi.application.service;
 
 import com.myblog.memberapi.adapter.out.persistence.MemberJpaEntity;
 import com.myblog.memberapi.adapter.out.persistence.MemberMapper;
+import com.myblog.memberapi.adapter.out.persistence.SpringDataMemberRepository;
 import com.myblog.memberapi.application.port.in.RegisterMemberCommand;
 import com.myblog.memberapi.application.port.in.RegisterMemberUseCase;
 import com.myblog.memberapi.application.port.out.RegisterMemberPort;
@@ -17,18 +18,21 @@ public class RegisterMemberService implements RegisterMemberUseCase {
 
     private final RegisterMemberPort registerMemberPort;
     private final MemberMapper memberMapper;
+    private final SpringDataMemberRepository memberRepository;
 
     @Override
     public Member registerMember(RegisterMemberCommand command) {
+
+        if (registerMemberPort.existsByEmail(command.getEmail())) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.[입력 email: " + command.getEmail() + "]");
+        }
+
         MemberJpaEntity jpaEntity = registerMemberPort.createMember(
                 new Member.MemberName(command.getName()),
                 new Member.MemberPassword(command.getPassword()),
                 new Member.MemberEmail(command.getEmail()),
                 new Member.MemberIsValid(command.isValid())
         );
-
-        System.out.println("회원이 추가되었습니다.");
-        System.out.println(jpaEntity.toString());
 
         return memberMapper.mapToDomainEntity(jpaEntity);
     }
