@@ -1,13 +1,16 @@
 package com.myblog.memberapi.adapter.out.persistence;
 
 import com.myblog.memberapi.application.port.out.RegisterMemberPort;
+import com.myblog.memberapi.application.port.out.UpdateMemberInfoPort;
 import com.myblog.memberapi.domain.Member;
 import common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class MemberPersistenceAdapter implements RegisterMemberPort {
+public class MemberPersistenceAdapter implements RegisterMemberPort, UpdateMemberInfoPort {
 
     private final SpringDataMemberRepository memberRepository;
 
@@ -22,5 +25,20 @@ public class MemberPersistenceAdapter implements RegisterMemberPort {
                         memberIsValid.isValidValue()
                 )
         );
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Optional<MemberJpaEntity> findById(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+    @Override
+    public void save(MemberJpaEntity member) {
+        memberRepository.save(member);
     }
 }
