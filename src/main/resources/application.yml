@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: memberApi
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/member
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+#      ddl-auto: update
